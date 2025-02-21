@@ -32,7 +32,12 @@
                     <p class="text-gray-600"><?= htmlspecialchars($book['category']) ?></p>
                     <img src="images/<?= htmlspecialchars($book['image']) ?>" alt="<?= htmlspecialchars($book['title']) ?>" class="w-32 h-48 object-cover mt-2">
                     <p class="text-lg font-semibold mt-2">$<?= number_format($book['price'], 2) ?></p>
-                    <a href="cart.php?add=<?= $book['id'] ?>" class="bg-green-600 text-white px-3 py-2 rounded mt-3 inline-block">Add to Cart</a>
+                    <form action="/shop" method="POST">
+                        <input type="hidden" name="book_id" value="<?= $book['id'] ?>">
+                        <input type="number" name="quantity" value="1" min="1" class="border p-1 rounded w-16">
+                        <button type="submit" class="bg-green-600 text-white px-3 py-2 rounded mt-3 inline-block">Add to Cart</button>
+                    </form>
+
                     <a href="wishlist.php?add=<?= $book['id'] ?>" class="bg-yellow-500 text-white px-3 py-2 rounded mt-3 inline-block">Wishlist</a>
                 </li>
             <?php endforeach; ?>

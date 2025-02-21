@@ -44,4 +44,9 @@ class Book {
 
         return $this->db->fetch($sql, $params)['total'];
     }
+
+    public function findBookById($id) {
+        return $this->db->fetch("SELECT * FROM books WHERE id = :id", [':id' => $id]);
+    }
+    
 }

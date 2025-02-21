@@ -7,18 +7,21 @@ use Core\Router;
 
 $router = new Router();
 
-// Define routes
+// Shop routes
 $router->get('/shop', 'controllers/shop.php');
+$router->post('/shop', 'controllers/shop.php'); // Handles Add to Cart requests
 
-// Normalize URI
-$uri = rtrim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
+// Cart routes
+$router->get('/cart', 'controllers/showCart.php');
+$router->post('/cart', 'controllers/showCart.php');
+
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Route request
 $controller = $router->route($uri, $method);
 
 if ($controller && file_exists($controller)) {
     require $controller;
 } else {
-    abort(); // Ensure this function is defined in functions.php
+    abort();
 }
