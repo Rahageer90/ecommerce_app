@@ -8,12 +8,17 @@ use Core\Router;
 $router = new Router();
 
 // Shop routes
-$router->get('/shop', 'controllers/shop.php');
-$router->post('/shop', 'controllers/shop.php'); // Handles Add to Cart requests
+$router->get('/', 'controllers/shop.php');
+$router->post('/', 'controllers/shop.php');
 
 // Cart routes
 $router->get('/cart', 'controllers/showCart.php');
 $router->post('/cart', 'controllers/showCart.php');
+
+// Wishlist routes
+$router->get('/wishlist', 'controllers/wishlist.php');
+$router->post('/wishlist/add', 'controllers/wishlist.php');
+$router->post('/wishlist/remove', 'controllers/wishlist.php');
 
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];

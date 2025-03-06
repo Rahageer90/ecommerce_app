@@ -32,13 +32,28 @@
                     <p class="text-gray-600"><?= htmlspecialchars($book['category']) ?></p>
                     <img src="images/<?= htmlspecialchars($book['image']) ?>" alt="<?= htmlspecialchars($book['title']) ?>" class="w-32 h-48 object-cover mt-2">
                     <p class="text-lg font-semibold mt-2">$<?= number_format($book['price'], 2) ?></p>
-                    <form action="/shop" method="POST">
+
+                    <!-- Add to Cart Form -->
+                    <form action="/" method="POST" class="inline">
                         <input type="hidden" name="book_id" value="<?= $book['id'] ?>">
                         <input type="number" name="quantity" value="1" min="1" class="border p-1 rounded w-16">
                         <button type="submit" class="bg-green-600 text-white px-3 py-2 rounded mt-3 inline-block">Add to Cart</button>
                     </form>
 
-                    <a href="wishlist.php?add=<?= $book['id'] ?>" class="bg-yellow-500 text-white px-3 py-2 rounded mt-3 inline-block">Wishlist</a>
+                    <!-- Add/Remove from Wishlist Button -->
+                    <?php
+                    $isInWishlist = in_array($book['id'], $_SESSION['wishlist'] ?? []);
+                    if ($isInWishlist): ?>
+                        <form action="/wishlist/remove" method="POST" class="inline">
+                            <input type="hidden" name="book_id" value="<?= $book['id'] ?>">
+                            <button type="submit" name="remove" class="bg-red-500 text-white px-3 py-2 rounded mt-3 inline-block">Remove from Wishlist</button>
+                        </form>
+                    <?php else: ?>
+                        <form action="/wishlist/add" method="POST" class="inline">
+                            <input type="hidden" name="book_id" value="<?= $book['id'] ?>">
+                            <button type="submit" name="add" class="bg-yellow-500 text-white px-3 py-2 rounded mt-3 inline-block">Add to Wishlist</button>
+                        </form>
+                    <?php endif; ?>
                 </li>
             <?php endforeach; ?>
         </ul>

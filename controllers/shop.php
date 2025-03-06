@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_id'])) {
     }
 
     // Redirect back to shop
-    header("Location: /shop");
+    header("Location: /");
     exit;
 }
 require_once __DIR__ . '/../views/shop.view.php';

@@ -15,4 +15,3 @@ $db = new Database($config['database']);
 
 require_once __DIR__ . '/route.php'; // Load routes
 
-

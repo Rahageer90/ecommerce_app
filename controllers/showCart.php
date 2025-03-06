@@ -23,5 +23,4 @@ foreach ($cartItems as $item) {
     $total += $item['price'] * $item['quantity'];
 }
 
-// Load the view
 require_once __DIR__ . '/../views/showCart.view.php';
