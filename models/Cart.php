@@ -114,8 +114,7 @@ class Cart {
                 unset($_SESSION['cart'][$bookId]);
             }
         }
-    }
-    
+    }   
     // Update cart after login
     public function transferGuestCartToUser($userId) {
         if (!$userId || empty($_SESSION['cart'])) return;

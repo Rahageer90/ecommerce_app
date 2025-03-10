@@ -2,7 +2,7 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
             <div class="flex items-center">
-                <a href="/shop">
+                <a href="/">
                     <img class="size-8" src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Bookstore">
                 </a>
                 <div class="hidden md:block">
@@ -15,9 +15,13 @@
             </div>
             <div class="hidden md:block">
                 <div class="ml-4 flex items-center md:ml-6">
-                    <a href="login.php" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">
-                        <?= isset($_SESSION['user_id']) ? 'Logout' : 'Login' ?>
-                    </a>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <span class="text-gray-300 px-3 py-2 text-sm font-medium">Welcome, <?= htmlspecialchars($_SESSION['user_name']) ?></span>
+                        <a href="/logout" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Logout</a>
+                    <?php else: ?>
+                        <a href="/login" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Login</a>
+                        <a href="/register" class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Register</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

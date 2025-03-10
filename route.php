@@ -20,6 +20,13 @@ $router->get('/wishlist', 'controllers/wishlist.php');
 $router->post('/wishlist/add', 'controllers/wishlist.php');
 $router->post('/wishlist/remove', 'controllers/wishlist.php');
 
+// Auth routes
+$router->get('/login', 'controllers/login.php');
+$router->post('/login', 'controllers/login.php');
+$router->get('/register', 'controllers/register.php');
+$router->post('/register', 'controllers/register.php');
+$router->get('/logout', 'controllers/logout.php');
+
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 

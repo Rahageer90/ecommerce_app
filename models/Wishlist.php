@@ -59,14 +59,14 @@ class Wishlist {
         if (!$userId || empty($_SESSION['wishlist'])) {
             return; // Exit if no user ID or session wishlist is empty
         }
-
+    
         foreach ($_SESSION['wishlist'] as $bookId) {
             // Check if the book is already in the user's wishlist
             $existingWishlistItem = $this->db->fetch("SELECT id FROM wishlists WHERE user_id = :user_id AND book_id = :book_id", [
                 ':user_id' => $userId,
                 ':book_id' => $bookId
             ]);
-
+    
             if (!$existingWishlistItem) {
                 // Insert new wishlist item
                 $this->db->query("INSERT INTO wishlists (user_id, book_id) VALUES (:user_id, :book_id)", [
@@ -75,7 +75,7 @@ class Wishlist {
                 ]);
             }
         }
-
+    
         // Clear guest session wishlist after transfer
         unset($_SESSION['wishlist']);
     }
