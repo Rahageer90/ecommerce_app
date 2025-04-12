@@ -8,7 +8,7 @@
 </header>
 
 <main class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-    <form method="GET" action="/shop" class="mb-6 flex gap-2">
+    <form method="GET" action="/" class="mb-6 flex gap-2">
         <input type="text" name="search" class="border p-2 rounded w-full" 
                placeholder="Search books..." value="<?= htmlspecialchars($search) ?>">
         
@@ -40,10 +40,9 @@
                         <button type="submit" class="bg-green-600 text-white px-3 py-2 rounded mt-3 inline-block">Add to Cart</button>
                     </form>
 
-                    <!-- Add/Remove from Wishlist Button -->
-                    <?php
-                    $isInWishlist = in_array($book['id'], $_SESSION['wishlist'] ?? []);
-                    if ($isInWishlist): ?>
+                    <!-- Add/Remove from Wishlist -->
+                    <?php $isInWishlist = in_array($book['id'], $wishlistIds); ?>
+                    <?php if ($isInWishlist): ?>
                         <form action="/wishlist/remove" method="POST" class="inline">
                             <input type="hidden" name="book_id" value="<?= $book['id'] ?>">
                             <button type="submit" name="remove" class="bg-red-500 text-white px-3 py-2 rounded mt-3 inline-block">Remove from Wishlist</button>

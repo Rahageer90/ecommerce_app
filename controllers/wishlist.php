@@ -1,48 +1,36 @@
 <?php
-session_start(); // Ensure session is started
+session_start();
 require_once __DIR__ . '/../models/Wishlist.php';
-require_once __DIR__ . '/../models/Cart.php'; // Include Cart model
+require_once __DIR__ . '/../models/Cart.php';
 
 $wishlistModel = new Wishlist();
-$cartModel = new Cart(); // Initialize Cart model
+$cartModel = new Cart();
 $userId = $_SESSION['user_id'] ?? null;
 
 // Handle Add/Remove Wishlist Requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['book_id'])) {
         $bookId = $_POST['book_id'];
-        if (isset($_POST['add'])) {
-            echo "Adding book $bookId to wishlist...<br>";
-            $wishlistModel->addToWishlist($bookId, $userId);
 
-            // Redirect based on the current page
-            $currentUri = $_SERVER['REQUEST_URI'];
-            if ($currentUri === '/wishlist') {
-                header("Location: /wishlist");
-            } else {
-                header("Location: /");
-            }
+        // Use HTTP_REFERER for redirect fallback
+        $redirectBack = $_SERVER['HTTP_REFERER'] ?? '/';
+
+        if (isset($_POST['add'])) {
+            $wishlistModel->addToWishlist($bookId, $userId);
+            header("Location: $redirectBack");
             exit;
         } elseif (isset($_POST['remove'])) {
-            echo "Removing book $bookId from wishlist...<br>";
             $wishlistModel->removeFromWishlist($bookId, $userId);
-
-            // Redirect to the wishlist page after removal
-            header("Location: /wishlist");
+            header("Location: $redirectBack");
             exit;
         } elseif (isset($_POST['add_to_cart'])) {
-            // Handle Add to Cart request
             $quantity = $_POST['quantity'] ?? 1;
             if ($userId) {
-                // If user is logged in, store in database
                 $cartModel->addToCart($bookId, $quantity);
             } else {
-                // If user is guest, store in session
                 $_SESSION['cart'][$bookId] = ($_SESSION['cart'][$bookId] ?? 0) + $quantity;
             }
-
-            // Redirect to the wishlist page after adding to cart
-            header("Location: /wishlist");
+            header("Location: $redirectBack");
             exit;
         }
     }

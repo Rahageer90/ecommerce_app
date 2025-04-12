@@ -14,14 +14,17 @@ class Wishlist {
             // For logged-in users: Insert into database
             $sql = "INSERT INTO wishlists (user_id, book_id) VALUES (:user_id, :book_id)
                     ON DUPLICATE KEY UPDATE book_id = book_id";
-            $this->db->query($sql, ['user_id' => $userId, 'book_id' => $bookId]);
+            $this->db->query($sql, [
+                ':user_id' => $userId,
+                ':book_id' => $bookId
+            ]);
         } else {
             // For guests: Store in session
             if (!isset($_SESSION['wishlist'])) {
-                $_SESSION['wishlist'] = []; // Initialize the session array if it doesn't exist
+                $_SESSION['wishlist'] = [];
             }
             if (!in_array($bookId, $_SESSION['wishlist'])) {
-                $_SESSION['wishlist'][] = $bookId; // Add the book ID to the session array
+                $_SESSION['wishlist'][] = $bookId;
             }
         }
     }
@@ -30,7 +33,10 @@ class Wishlist {
         if ($userId) {
             // For logged-in users: Remove from database
             $sql = "DELETE FROM wishlists WHERE user_id = :user_id AND book_id = :book_id";
-            $this->db->query($sql, ['user_id' => $userId, 'book_id' => $bookId]);
+            $this->db->query($sql, [
+                ':user_id' => $userId,
+                ':book_id' => $bookId
+            ]);
         } else {
             // For guests: Remove from session
             if (!empty($_SESSION['wishlist'])) {
@@ -42,41 +48,51 @@ class Wishlist {
     public function getWishlist($userId = null) {
         if ($userId) {
             // For logged-in users: Fetch from database
-            return $this->db->fetchAll("SELECT books.* FROM wishlists 
-                                       JOIN books ON wishlists.book_id = books.id 
-                                       WHERE wishlists.user_id = :user_id", ['user_id' => $userId]);
+            return $this->db->fetchAll(
+                "SELECT books.* FROM wishlists 
+                 JOIN books ON wishlists.book_id = books.id 
+                 WHERE wishlists.user_id = :user_id",
+                ['user_id' => $userId]
+            );
         } else {
             // For guests: Fetch from session
             if (!empty($_SESSION['wishlist'])) {
                 $placeholders = implode(',', array_fill(0, count($_SESSION['wishlist']), '?'));
-                return $this->db->fetchAll("SELECT * FROM books WHERE id IN ($placeholders)", $_SESSION['wishlist']);
+                return $this->db->fetchAll(
+                    "SELECT * FROM books WHERE id IN ($placeholders)",
+                    $_SESSION['wishlist']
+                );
             }
             return [];
         }
     }
 
     public function transferGuestWishlistToUser($userId) {
-        if (!$userId || empty($_SESSION['wishlist'])) {
-            return; // Exit if no user ID or session wishlist is empty
+        if (!isset($_SESSION['wishlist']) || empty($_SESSION['wishlist'])) {
+            return;
         }
-    
+
         foreach ($_SESSION['wishlist'] as $bookId) {
-            // Check if the book is already in the user's wishlist
-            $existingWishlistItem = $this->db->fetch("SELECT id FROM wishlists WHERE user_id = :user_id AND book_id = :book_id", [
-                ':user_id' => $userId,
-                ':book_id' => $bookId
-            ]);
-    
-            if (!$existingWishlistItem) {
-                // Insert new wishlist item
-                $this->db->query("INSERT INTO wishlists (user_id, book_id) VALUES (:user_id, :book_id)", [
+            // Check if the wishlist item already exists for the user
+            $existingItem = $this->db->fetch(
+                "SELECT * FROM wishlists WHERE user_id = :user_id AND book_id = :book_id",
+                [
                     ':user_id' => $userId,
                     ':book_id' => $bookId
-                ]);
+                ]
+            );
+
+            if (!$existingItem) {
+                $this->db->query(
+                    "INSERT INTO wishlists (user_id, book_id) VALUES (:user_id, :book_id)",
+                    [
+                        ':user_id' => $userId,
+                        ':book_id' => $bookId
+                    ]
+                );
             }
         }
-    
-        // Clear guest session wishlist after transfer
-        unset($_SESSION['wishlist']);
+
+        unset($_SESSION['wishlist']); // Clear guest wishlist
     }
 }

@@ -1,7 +1,7 @@
 <?php
-require_once 'models/Book.php';
-require_once 'models/Wishlist.php';
-require_once 'models/Cart.php';
+require_once __DIR__ . '/../models/Book.php';
+require_once __DIR__ . '/../models/Wishlist.php';
+require_once __DIR__ . '/../models/Cart.php';
 
 session_start();
 
@@ -18,30 +18,29 @@ $page = max(1, (int) ($_GET['page'] ?? 1));
 $limit = 10;
 $offset = ($page - 1) * $limit;
 
-// Fetch books based on search and category filters
+// Fetch books
 $books = $bookModel->fetchBooks($search, $category, $limit, $offset);
 $totalBooks = $bookModel->countBooks($search, $category);
 $totalPages = ceil($totalBooks / $limit);
 
-// Fetch wishlist
+// Wishlist
 $userId = $_SESSION['user_id'] ?? null;
-$wishlist = $wishlistModel->getWishlist($userId);
+$wishlistBooks = $wishlistModel->getWishlist($userId);
+$wishlistIds = array_column($wishlistBooks, 'id'); // For button state
 
-// Handle Add to Cart request
+// Handle Add to Cart
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['book_id'])) {
     $bookId = $_POST['book_id'];
-    $quantity = $_POST['quantity'] ?? 1;
+    $quantity = (int) ($_POST['quantity'] ?? 1);
 
     if ($userId) {
-        // If user is logged in, store in database
         $cartModel->addToCart($bookId, $quantity);
     } else {
-        // If user is guest, store in session
         $_SESSION['cart'][$bookId] = ($_SESSION['cart'][$bookId] ?? 0) + $quantity;
     }
 
-    // Redirect back to shop
     header("Location: /");
     exit;
 }
+
 require_once __DIR__ . '/../views/shop.view.php';
